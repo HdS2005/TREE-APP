@@ -1,16 +1,15 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
+import { GridPostList, Loader, PostStats } from "@/components/shared";
 import { Button } from "@/components/ui";
-import { Loader } from "@/components/shared";
-import { GridPostList, PostStats } from "@/components/shared";
 
+import { useUserContext } from "@/context/AuthContext";
 import {
-  useGetPostById,
-  useGetUserPosts,
-  useDeletePost,
+    useDeletePost,
+    useGetPostById,
+    useGetUserPosts,
 } from "@/lib/react-query/queries";
 import { multiFormatDateString } from "@/lib/utils";
-import { useUserContext } from "@/context/AuthContext";
 
 const PostDetails = () => {
   const navigate = useNavigate();
@@ -73,7 +72,7 @@ const PostDetails = () => {
                   className="w-8 h-8 lg:w-12 lg:h-12 rounded-full"
                 />
                 <div className="flex gap-1 flex-col">
-                  <p className="base-medium lg:body-bold text-light-1">
+                  <p className="base-medium lg:body-bold text-black">
                     {post?.creator.name}
                   </p>
                   <div className="flex-center gap-2 text-light-3">

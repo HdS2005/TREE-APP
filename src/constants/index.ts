@@ -1,3 +1,5 @@
+// src/constants/navigationLinks.ts
+
 export const sidebarLinks = [
   {
     imgURL: "/assets/icons/home.svg",
@@ -33,6 +35,11 @@ export const bottombarLinks = [
     label: "Home",
   },
   {
+    imgURL: "/assets/icons/gallery-add.svg",
+    route: "/create-post",
+    label: "Create",
+  },
+  {
     imgURL: "/assets/icons/wallpaper.svg",
     route: "/explore",
     label: "Explore",
@@ -41,10 +48,5 @@ export const bottombarLinks = [
     imgURL: "/assets/icons/bookmark.svg",
     route: "/saved",
     label: "Saved",
-  },
-  {
-    imgURL: "/assets/icons/gallery-add.svg",
-    route: "/create-post",
-    label: "Create",
   },
 ];

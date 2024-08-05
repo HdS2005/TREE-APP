@@ -1,5 +1,3 @@
-// @/_root/pages/Home.tsx
-
 import { Loader, PostCard, UserCard } from "@/components/shared";
 import ObjectiveCard from '@/components/shared/ObjectiveCard';
 import { useGetRecentPosts, useGetUsers } from "@/lib/react-query/queries";
@@ -7,56 +5,81 @@ import { Models } from "appwrite";
 
 const Home = () => {
   const { data: posts, isLoading: isPostLoading, isError: isErrorPosts } = useGetRecentPosts();
-  const { data: creators, isLoading: isUserLoading, isError: isErrorCreators } = useGetUsers(10);
+  const { data: creators, isLoading: isUserLoading, isError: isErrorCreators } = useGetUsers(); // Remove limit parameter
 
   if (isErrorPosts || isErrorCreators) {
     return (
-      <div className="flex flex-1 p-4">
-        <div className="flex-1 bg-green-50 p-6 rounded-lg">
+      <div className="flex flex-col p-4">
+        <div className="bg-red-100 p-6 rounded-lg mb-4">
           <p className="body-medium text-red-600">Something went wrong while fetching posts.</p>
         </div>
-        <div className="w-1/4 bg-green-50 p-6 rounded-lg ml-4">
+        <div className="bg-red-100 p-6 rounded-lg">
           <p className="body-medium text-red-600">Something went wrong while fetching creators.</p>
         </div>
       </div>
     );
   }
 
+  // Ensure proper typing for creators
+  const sortedCreators = (creators?.documents ?? [])
+    .map((creator: Models.Document & { posts: any[] }) => ({
+      ...creator,
+      postCount: creator.posts.length, // Assuming you have posts as an array
+    }))
+    .sort((a, b) => (b.postCount ?? 0) - (a.postCount ?? 0)); // Remove slicing
+
   return (
-    <div className="flex flex-1 p-4 bg-green-50">
-      <div className="flex-1 mr-4 bg-white p-6 rounded-lg shadow-md">
+    <div className="flex flex-col md:flex-row p-4 bg-teal-100">
+      <div className="flex-1 mb-4 md:mb-0 md:mr-4 bg-white p-6 rounded-lg shadow-lg">
         <div className="mb-6 text-center">
-          <h2 className="text-2xl font-bold text-green-900">Home</h2>
+          <h2 className="text-3xl font-bold text-primary">🌳 HOME 🌱</h2>
           <img
-            src="public/assets/images/TREE_SIGNUP.jpg" // Path to your image
+            src="/assets/images/image.png" // Path to your image
             alt="Description of the photo"
-            className="mx-auto mt-4 max-w-full h-auto rounded-lg shadow-lg"
+            className="mx-auto mt-4 max-w-full h-auto rounded-lg shadow-xl"
           />
         </div>
-        {/* ObjectiveCard Component */}
         <ObjectiveCard dailyObjective={3258} monthlyObjective={1000000} yearlyObjective={15100000} />
+        <div className="relative mb-8 mt-6 md:mb-12 text-center">
+          <div className="flex items-center justify-between">
+            <hr className="flex-1 border-t-2 border-primary" />
+            <h2 className="mx-4 text-3xl font-bold text-primary">🌳 TRENDING 🌱</h2>
+            <hr className="flex-1 border-t-2 border-primary" />
+          </div>
+        </div>
         {isPostLoading && !posts ? (
           <Loader />
         ) : (
-          <ul className="flex flex-col gap-6">
-            {posts?.documents.map((post: Models.Document) => (
-              <li key={post.$id} className="flex justify-center">
-                <PostCard post={post} />
+          <ul className="flex flex-col gap-8 md:gap-10">
+            {posts?.documents.length === 0 ? (
+              <li className="text-center text-xl font-semibold text-gray-700">
+                You Have No Posts
               </li>
-            ))}
+            ) : (
+              posts?.documents.map((post: Models.Document) => (
+                <li key={post.$id} className="flex justify-center">
+                  <PostCard post={post} />
+                </li>
+              ))
+            )}
           </ul>
         )}
       </div>
 
-      <div className="w-1/4 bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-xl font-bold text-green-900 mb-4">Top Creators</h3>
+      <div className="w-full md:w-1/4 bg-white p-6 rounded-lg shadow-lg">
+        <h3 className="text-2xl font-bold text-primary mb-4 text-center">LEADERBOARD</h3>
         {isUserLoading && !creators ? (
           <Loader />
         ) : (
-          <ul className="grid grid-cols-1 gap-4">
-            {creators?.documents.map((creator) => (
-              <li key={creator?.$id}>
-                <UserCard user={creator} />
+          <ul className="grid grid-cols-1 gap-4 justify-items-center">
+            {sortedCreators.map((creator: Models.Document & { postCount?: number }, index: number) => (
+              <li key={creator.$id} className="w-full max-w-[300px]">
+                <UserCard
+                  user={creator}
+                  isFirst={index === 0}
+                  isSecond={index === 1}
+                  isThird={index === 2}
+                />
               </li>
             ))}
           </ul>

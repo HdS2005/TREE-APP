@@ -1,25 +1,25 @@
-import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Models } from "appwrite";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
+import { FileUploader, Loader } from "@/components/shared";
 import {
+  Button,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  Button,
   Input,
   Textarea,
 } from "@/components/ui";
-import { PostValidation } from "@/lib/validation";
 import { useToast } from "@/components/ui/use-toast";
 import { useUserContext } from "@/context/AuthContext";
-import { FileUploader, Loader } from "@/components/shared";
 import { useCreatePost, useUpdatePost } from "@/lib/react-query/queries";
+import { PostValidation } from "@/lib/validation";
 
 type PostFormProps = {
   post?: Models.Document;
@@ -40,50 +40,103 @@ const PostForm = ({ post, action }: PostFormProps) => {
     },
   });
 
-  // Query
+  // Queries
   const { mutateAsync: createPost, isLoading: isLoadingCreate } =
     useCreatePost();
   const { mutateAsync: updatePost, isLoading: isLoadingUpdate } =
     useUpdatePost();
 
+  // Get geolocation
+  const getGeolocation = (): Promise<{ lat: number; long: number }> => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("Geolocation is not supported by this browser."));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log('Geolocation retrieved:', {
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
+          });
+          resolve({
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          reject(error);
+        }
+      );
+    });
+  };
+
   // Handler
   const handleSubmit = async (value: z.infer<typeof PostValidation>) => {
-    // ACTION = UPDATE
-    if (post && action === "Update") {
-      const updatedPost = await updatePost({
+    try {
+      // Get geolocation data
+      const { lat, long } = await getGeolocation();
+      const geoLocation = { lat, long };
+      console.log('GeoLocation:', geoLocation);
+
+      // ACTION = UPDATE
+      if (post && action === "Update") {
+        const updatedPost = await updatePost({
+          ...value,
+          postId: post.$id,
+          imageId: post.imageId,
+          imageUrl: post.imageUrl,
+          // Add geoLocation as a new attribute if your schema allows
+          // Otherwise, you might want to combine this with the manual location
+        });
+
+        console.log('Update response:', updatedPost);
+
+        if (!updatedPost) {
+          toast({
+            title: `${action} post failed. Please try again.`,
+          });
+        }
+        return navigate(`/posts/${post.$id}`);
+      }
+
+      // ACTION = CREATE
+      const newPost = await createPost({
         ...value,
-        postId: post.$id,
-        imageId: post.imageId,
-        imageUrl: post.imageUrl,
+        userId: user.id,
+        // Store geolocation in the 'location' field or another suitable attribute
+        location: JSON.stringify(geoLocation), // Combine with manual location if needed
       });
 
-      if (!updatedPost) {
+      console.log('Create response:', newPost);
+
+      if (!newPost) {
         toast({
           title: `${action} post failed. Please try again.`,
         });
       }
-      return navigate(`/posts/${post.$id}`);
+      navigate("/");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: "Failed to get location. Please try again.",
+          description: error.message || "An unexpected error occurred.",
+        });
+      } else {
+        toast({
+          title: "Failed to get location. Please try again.",
+          description: "An unexpected error occurred.",
+        });
+      }
     }
-
-    // ACTION = CREATE
-    const newPost = await createPost({
-      ...value,
-      userId: user.id,
-    });
-
-    if (!newPost) {
-      toast({
-        title: `${action} post failed. Please try again.`,
-      });
-    }
-    navigate("/");
   };
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-9 w-full  max-w-5xl">
+        className="flex flex-col gap-9 w-full max-w-5xl">
         <FormField
           control={form.control}
           name="caption"
@@ -123,9 +176,15 @@ const PostForm = ({ post, action }: PostFormProps) => {
           name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="shad-form_label">Add Location</FormLabel>
+              <FormLabel className="shad-form_label">
+                Add Location (Your geolocation is collected automatically. You can still provide a manual location if desired.)
+              </FormLabel>
               <FormControl>
-                <Input type="text" className="shad-input" {...field} />
+                <Input
+                  type="text"
+                  className="shad-input"
+                  {...field}
+                />
               </FormControl>
               <FormMessage className="shad-form_message" />
             </FormItem>

@@ -1,9 +1,8 @@
+import { PostStats } from "@/components/shared";
+import { useUserContext } from "@/context/AuthContext";
+import { multiFormatDateString } from "@/lib/utils";
 import { Models } from "appwrite";
 import { Link } from "react-router-dom";
-
-import { PostStats } from "@/components/shared";
-import { multiFormatDateString } from "@/lib/utils";
-import { useUserContext } from "@/context/AuthContext";
 
 type PostCardProps = {
   post: Models.Document;
@@ -12,7 +11,10 @@ type PostCardProps = {
 const PostCard = ({ post }: PostCardProps) => {
   const { user } = useUserContext();
 
-  if (!post.creator) return;
+  if (!post.creator) return null;
+
+  // Debugging: Log image URL
+  console.log("Post Image URL:", post.imageUrl);
 
   return (
     <div className="post-card">
@@ -30,15 +32,15 @@ const PostCard = ({ post }: PostCardProps) => {
           </Link>
 
           <div className="flex flex-col">
-            <p className="base-medium lg:body-bold text-light-1">
+            <p className="base-medium lg:body-bold text-black">
               {post.creator.name}
             </p>
-            <div className="flex-center gap-2 text-light-3">
-              <p className="subtle-semibold lg:small-regular ">
+            <div className="flex-center gap-2 text-gray-700">
+              <p className="subtle-semibold lg:small-regular text-black">
                 {multiFormatDateString(post.$createdAt)}
               </p>
               •
-              <p className="subtle-semibold lg:small-regular">
+              <p className="subtle-semibold lg:small-regular text-black">
                 {post.location}
               </p>
             </div>
@@ -59,10 +61,10 @@ const PostCard = ({ post }: PostCardProps) => {
 
       <Link to={`/posts/${post.$id}`}>
         <div className="small-medium lg:base-medium py-5">
-          <p>{post.caption}</p>
+          <p className="text-black">{post.caption}</p>
           <ul className="flex gap-1 mt-2">
             {post.tags.map((tag: string, index: string) => (
-              <li key={`${tag}${index}`} className="text-light-3 small-regular">
+              <li key={`${tag}${index}`} className="text-gray-700 small-regular text-black">
                 #{tag}
               </li>
             ))}
@@ -70,7 +72,7 @@ const PostCard = ({ post }: PostCardProps) => {
         </div>
 
         <img
-          src={post.imageUrl || "/assets/icons/profile-placeholder.svg"}
+          src={post.imageUrl || "/assets/images/TREE_SIGNUP.jpg"}
           alt="post image"
           className="post-card_img"
         />

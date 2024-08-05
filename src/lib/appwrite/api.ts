@@ -1,7 +1,8 @@
 import { ID, Query } from "appwrite";
 
-import { appwriteConfig, account, databases, storage, avatars } from "./config";
-import { IUpdatePost, INewPost, INewUser, IUpdateUser } from "@/types";
+import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
+import { account, appwriteConfig, avatars, databases, storage } from "./config";
+
 
 // ============================================================
 // AUTH
@@ -19,7 +20,7 @@ export async function createUserAccount(user: INewUser) {
 
     if (!newAccount) throw Error;
 
-    const avatarUrl = avatars.getInitials(user.name);
+    const avatarUrl = avatars.getInitials(user.name) || '/assets/images/TREE_SIGNUP.jpg';
 
     const newUser = await saveUserToDB({
       accountId: newAccount.$id,
@@ -28,6 +29,7 @@ export async function createUserAccount(user: INewUser) {
       username: user.username,
       imageUrl: avatarUrl,
     });
+    
 
     return newUser;
   } catch (error) {

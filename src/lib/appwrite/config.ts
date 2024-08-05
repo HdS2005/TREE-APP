@@ -1,4 +1,4 @@
-import { Client, Account, Databases, Storage, Avatars } from "appwrite";
+import { Account, Avatars, Client, Databases, Storage } from "appwrite";
 
 export const appwriteConfig = {
   url: import.meta.env.VITE_APPWRITE_URL,
@@ -12,8 +12,8 @@ export const appwriteConfig = {
 
 export const client = new Client();
 
-client.setEndpoint(appwriteConfig.url);
-client.setProject(appwriteConfig.projectId);
+client.setEndpoint('https://cloud.appwrite.io/v1');
+client.setProject('66a69a480018fd125315');
 
 export const account = new Account(client);
 export const databases = new Databases(client);

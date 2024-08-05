@@ -53,7 +53,7 @@ const SigninForm = () => {
     <Form {...form}>
       <div
         className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(/assets/images/TREE-SIGNUP.jpg)` }} // Same image as SignupForm
+        //style={{ backgroundImage: `url(/assets/images/TREE-SIGNUP.jpg)` }} // Same image as SignupForm
       >
         <div
           className="w-full max-w-3xl p-12 rounded-lg shadow-lg space-y-8"

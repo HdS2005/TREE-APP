@@ -1,3 +1,5 @@
+// src/types/index.ts
+
 export type INavLink = {
   imgURL: string;
   route: string;
@@ -11,6 +13,7 @@ export type IUpdateUser = {
   imageId: string;
   imageUrl: URL | string;
   file: File[];
+  username?: string;
 };
 
 export type INewPost = {
@@ -45,4 +48,5 @@ export type INewUser = {
   email: string;
   username: string;
   password: string;
+  
 };

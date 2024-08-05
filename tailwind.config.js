@@ -1,6 +1,4 @@
-/** @type {import('tailwindcss').Config} */
-const defaultTheme = require('tailwindcss/defaultTheme')
-
+// tailwind.config.js
 module.exports = {
   darkMode: ['class'],
   content: [
@@ -15,7 +13,6 @@ module.exports = {
       padding: '2rem',
       screens: {
         '2xl': '1400px',
-      
       },
     },
     extend: {
@@ -24,7 +21,7 @@ module.exports = {
         'primary-600': '#5D5FEF',
         'secondary-500': '#FFB620',
         'off-white': '#D0DFFF',
-        'red': '#FF5A5A',
+        'red-600': '#FF5A5A', // Define red-600 if you want to use this specific shade
         'dark-1': '#000000',
         'dark-2': '#09090A',
         'dark-3': '#101012',
@@ -33,10 +30,15 @@ module.exports = {
         'light-2': '#EFEFEF',
         'light-3': '#7878A3',
         'light-4': '#5C5C7B',
+        'primary': '#53a687',
+        'secondary': '#c1d96c',
+        'accent': '#def294',
+        'highlighted': '#f2b885',
+        'background': '#e8faf4',
+         
       },
       screens: {
         'xs': '480px',
-      
       },
       width: {
         '420': '420px',
@@ -44,7 +46,6 @@ module.exports = {
       },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
-
       },
       keyframes: {
         'accordion-down': {

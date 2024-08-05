@@ -13,7 +13,7 @@ import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/querie
 import { SignupValidation } from "@/lib/validation";
 
 // Import the image
-import treeSignUpImage from "@/assets/images/TREE-SIGNUP.jpg";
+//import treeSignUpImage from "@/assets/images/TREE-SIGNUP.jpg";
 
 const SignupForm = () => {
   const { toast } = useToast();
@@ -73,14 +73,14 @@ const SignupForm = () => {
     <Form {...form}>
       <div
         className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${treeSignUpImage})` }}
+        //style={{ backgroundImage: `url(${treeSignUpImage})` }}
       >
         <div
           className="w-full max-w-4xl p-8 rounded-lg shadow-md space-y-6"
           style={{ backgroundColor: '#e6ffe6' }}
         >
           <div className="text-center">
-            <h1 className="text-3xl font-extrabold text-green-900">NewTree</h1>
+            <h1 className="text-3xl font-extrabold text-green-900">🌱NewTree🌱</h1>
             <h2 className="text-2xl font-bold text-green-900 mt-2">Create a new account</h2>
             <p className="text-green-700 mt-1">To use NewTree, please enter your details</p>
           </div>
