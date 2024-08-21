@@ -3,7 +3,7 @@ import { ID, Query } from "appwrite";
 import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 
-
+import { ImageGravity } from "appwrite";
 // ============================================================
 // AUTH
 // ============================================================
@@ -61,15 +61,17 @@ export async function saveUserToDB(user: {
 }
 
 // ============================== SIGN IN
+// ============================== SIGN IN
 export async function signInAccount(user: { email: string; password: string }) {
   try {
-    const session = await account.createEmailSession(user.email, user.password);
-
+    const session = await account.createSession(user.email, user.password);
     return session;
   } catch (error) {
-    console.log(error);
+    console.error("Error signing in account:", error);
+    throw error;
   }
 }
+
 
 // ============================== GET ACCOUNT
 export async function getAccount() {
@@ -186,7 +188,7 @@ export function getFilePreview(fileId: string) {
       fileId,
       2000,
       2000,
-      "top",
+      ImageGravity.Top, // Corrected to ImageGravity.Top
       100
     );
 
@@ -194,7 +196,7 @@ export function getFilePreview(fileId: string) {
 
     return fileUrl;
   } catch (error) {
-    console.log(error);
+    console.error("Error generating file preview URL:", error);
   }
 }
 

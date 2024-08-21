@@ -1,11 +1,13 @@
 import { Loader, PostCard, UserCard } from "@/components/shared";
-import ObjectiveCard from '@/components/shared/ObjectiveCard';
+import ObjectiveCard from "@/components/shared/ObjectiveCard";
 import { useGetRecentPosts, useGetUsers } from "@/lib/react-query/queries";
 import { Models } from "appwrite";
 
+type CreatorWithPosts = Models.Document & { posts?: any[]; postCount?: number };
+
 const Home = () => {
   const { data: posts, isLoading: isPostLoading, isError: isErrorPosts } = useGetRecentPosts();
-  const { data: creators, isLoading: isUserLoading, isError: isErrorCreators } = useGetUsers(); // Remove limit parameter
+  const { data: creators, isLoading: isUserLoading, isError: isErrorCreators } = useGetUsers();
 
   if (isErrorPosts || isErrorCreators) {
     return (
@@ -20,13 +22,12 @@ const Home = () => {
     );
   }
 
-  // Ensure proper typing for creators
   const sortedCreators = (creators?.documents ?? [])
-    .map((creator: Models.Document & { posts: any[] }) => ({
+    .map((creator) => ({
       ...creator,
-      postCount: creator.posts.length, // Assuming you have posts as an array
+      postCount: (creator as CreatorWithPosts).posts?.length || 0,
     }))
-    .sort((a, b) => (b.postCount ?? 0) - (a.postCount ?? 0)); // Remove slicing
+    .sort((a, b) => (b.postCount ?? 0) - (a.postCount ?? 0));
 
   return (
     <div className="flex flex-col md:flex-row p-4 bg-teal-100">
@@ -72,10 +73,10 @@ const Home = () => {
           <Loader />
         ) : (
           <ul className="grid grid-cols-1 gap-4 justify-items-center">
-            {sortedCreators.map((creator: Models.Document & { postCount?: number }, index: number) => (
+            {sortedCreators.map((creator, index) => (
               <li key={creator.$id} className="w-full max-w-[300px]">
                 <UserCard
-                  user={creator}
+                  user={creator as CreatorWithPosts}
                   isFirst={index === 0}
                   isSecond={index === 1}
                   isThird={index === 2}
